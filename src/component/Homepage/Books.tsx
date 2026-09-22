@@ -1,11 +1,24 @@
 import { Book } from "@/Type/books.type";
 import BookCard from "../Shared/bookCard";
 
-const getBooks = async ():Promise<Book[]> => {
-    const res = await fetch("http://localhost:3000/booksData.json");
-    const data = await res.json();
+const getBooks = async (): Promise<Book[]> => {
+    try {
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/booksData.json`
+        );
 
-    return data;
+        if (!res.ok) {
+            throw new Error("Failed to fetch books");
+        }
+
+        const data = await res.json();
+
+        return data;
+    } catch (error) {
+        console.error("Error fetching books:", error);
+
+        return [];
+    }
 };
 
 const Books = async () => {
@@ -19,7 +32,7 @@ const Books = async () => {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {bookData.slice(0,6).map((book) => (
+                {bookData.slice(0, 6).map((book) => (
                     <BookCard
                         key={book.bookId}
                         book={book}
